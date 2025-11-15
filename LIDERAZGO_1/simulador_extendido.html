@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Liderazgo — 10 Escenarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .scenario {
+            margin-bottom: 20px;
+        }
+
+        .btn-option {
+            margin: 5px;
+        }
+
+        .result {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Simulador de Liderazgo</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="mb-3">Simulación: 10 Escenarios de Toma de Decisiones</h2>
+        <p class="text-muted">Lee cada escenario y elige la opción que más se parezca a lo que harías. Al final, pulsa
+            <b>Calcular perfil</b>.</p>
+
+        <form id="simForm">
+            <!-- Escenarios -->
+            <div id="scenarios"></div>
+
+            <!-- Botón calcular -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success btn-lg">Calcular perfil</button>
+            </div>
+        </form>
+
+        <!-- Resultado -->
+        <div id="result" class="result text-center mt-4"></div>
+    </div>
+
+    <script>
+        const escenarios = [
+            {
+                titulo: "Escenario 1 — Equipo desmotivado tras un proyecto fallido",
+                pregunta: "Tu equipo está desmoralizado tras no cumplir expectativas. ¿Qué haces primero?",
+                opciones: [
+                    { texto: "Convoco una reunión para dialogar y escuchar.", valor: "colaborativo" },
+                    { texto: "Exijo resultados inmediatos y más disciplina.", valor: "autoritario" },
+                    { texto: "Dejo que el equipo se reorganice por su cuenta.", valor: "laissezfaire" }
+                ]
+            },
+            {
+                titulo: "Escenario 2 — Nuevas ideas en el equipo",
+                pregunta: "Un colaborador propone una idea innovadora. ¿Cómo reaccionas?",
+                opciones: [
+                    { texto: "Escucho y planteo cómo encaja en la visión futura.", valor: "colaborativo" },
+                    { texto: "La someto a votación en el equipo.", valor: "democrático" },
+                    { texto: "Decido yo solo si se aplica o no.", valor: "autoritario" }
+                ]
+            },
+            {
+                titulo: "Escenario 3 — Crisis de tiempo en un proyecto",
+                pregunta: "El plazo está a punto de vencerse y falta mucho por hacer. ¿Qué haces?",
+                opciones: [
+                    { texto: "Asigno tareas estrictas y controlo cada avance.", valor: "autoritario" },
+                    { texto: "Recuerdo la importancia del objetivo final para motivar.", valor: "colaborativo" },
+                    { texto: "Refuerzo la confianza del equipo y doy apoyo emocional.", valor: "democrático" }
+                ]
+            },
+            {
+                titulo: "Escenario 4 — Conflicto entre dos miembros del equipo",
+                pregunta: "Dos compañeros discuten fuertemente. ¿Cómo actúas?",
+                opciones: [
+                    { texto: "Reúno a ambos y medió en el conflicto.", valor: "colaborativo" },
+                    { texto: "Tomo una decisión rápida para terminar la discusión.", valor: "autoritario" },
+                    { texto: "Dejo que ellos resuelvan solos.", valor: "laissezfaire" }
+                ]
+            },
+            {
+                titulo: "Escenario 5 — Delegación de tareas",
+                pregunta: "Tienes varias tareas importantes. ¿Cómo decides quién las hará?",
+                opciones: [
+                    { texto: "Escucho intereses y habilidades antes de asignar.", valor: "democrático" },
+                    { texto: "Asigno según criterios propios, sin consultar.", valor: "autoritario" },
+                    { texto: "Dejo que el equipo se organice libremente.", valor: "laissezfaire" }
+                ]
+            },
+            {
+                titulo: "Escenario 6 — Un error costoso en el proyecto",
+                pregunta: "Un miembro del equipo cometió un error que retrasó el proyecto. ¿Qué haces?",
+                opciones: [
+                    { texto: "Dialogo para entender causas y apoyo a mejorar.", valor: "colaborativo" },
+                    { texto: "Aplico una sanción para evitar repeticiones.", valor: "autoritario" },
+                    { texto: "Paso por alto el error y sigo adelante.", valor: "laissezfaire" }
+                ]
+            },
+            {
+                titulo: "Escenario 7 — Reconocimiento de logros",
+                pregunta: "Tu equipo logró un gran avance. ¿Cómo reaccionas?",
+                opciones: [
+                    { texto: "Felicito públicamente al equipo.", valor: "colaborativo" },
+                    { texto: "Doy una recompensa económica inmediata.", valor: "autoritario" },
+                    { texto: "Dejo que disfruten el logro sin intervenir.", valor: "laissezfaire" }
+                ]
+            },
+            {
+                titulo: "Escenario 8 — Nuevos miembros en el equipo",
+                pregunta: "Se integran dos personas nuevas. ¿Qué haces para incluirlas?",
+                opciones: [
+                    { texto: "Organizo dinámicas para integrarlos con todos.", valor: "colaborativo" },
+                    { texto: "Les asigno tareas directamente para que aprendan rápido.", valor: "autoritario" },
+                    { texto: "Dejo que ellos solos se adapten.", valor: "laissezfaire" }
+                ]
+            },
+            {
+                titulo: "Escenario 9 — Decisión estratégica importante",
+                pregunta: "Hay que tomar una decisión que impacta al proyecto. ¿Cómo procedes?",
+                opciones: [
+                    { texto: "Escucho opiniones y luego decido junto al equipo.", valor: "democrático" },
+                    { texto: "Decido yo solo, rápido y firme.", valor: "autoritario" },
+                    { texto: "Espero a ver qué sugiere el equipo antes de decidir.", valor: "colaborativo" }
+                ]
+            },
+            {
+                titulo: "Escenario 10 — Bajo rendimiento sostenido",
+                pregunta: "Un miembro no cumple metas desde hace meses. ¿Qué haces?",
+                opciones: [
+                    { texto: "Converso para entender y ofrezco acompañamiento.", valor: "colaborativo" },
+                    { texto: "Le doy un ultimátum o reemplazo.", valor: "autoritario" },
+                    { texto: "Ignoro la situación para evitar conflicto.", valor: "laissezfaire" }
+                ]
+            }
+        ];
+
+        // Render dinámico de los escenarios
+        const container = document.getElementById("scenarios");
+        escenarios.forEach((esc, i) => {
+            const div = document.createElement("div");
+            div.classList.add("card", "p-3", "scenario");
+            div.innerHTML = `
+        <h5>${esc.titulo}</h5>
+        <p>${esc.pregunta}</p>
+        ${esc.opciones.map((op, j) => `
+          <button type="button" class="btn btn-outline-primary btn-option"
+            onclick="selectOption(${i}, '${op.valor}', this)">
+            ${op.texto}
+          </button>
+        `).join("")}
+      `;
+            container.appendChild(div);
+        });
+
+        // Guardar respuestas
+        let respuestas = Array(escenarios.length).fill(null);
+
+        function selectOption(escenarioIndex, valor, btn) {
+            respuestas[escenarioIndex] = valor;
+
+            // Reset estilos botones del escenario
+            const parent = btn.closest(".scenario");
+            parent.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+        }
+
+        // Procesar resultado
+        document.getElementById("simForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            if (respuestas.includes(null)) {
+                alert("Por favor responde todos los escenarios antes de calcular tu perfil.");
+                return;
+            }
+
+            const conteo = {};
+            respuestas.forEach(r => conteo[r] = (conteo[r] || 0) + 1);
+
+            // Buscar el estilo con más elecciones
+            let perfil = Object.keys(conteo).reduce((a, b) => conteo[a] > conteo[b] ? a : b);
+
+            let mensaje = "";
+            switch (perfil) {
+                case "colaborativo":
+                    mensaje = "Tu estilo predominante es Colaborativo: priorizas la escucha, la integración y la motivación.";
+                    break;
+                case "autoritario":
+                    mensaje = "Tu estilo predominante es Autoritario: valoras la rapidez, disciplina y el control en la gestión.";
+                    break;
+                case "democrático":
+                    mensaje = "Tu estilo predominante es Democrático: te enfocas en decisiones compartidas y participación.";
+                    break;
+                case "laissezfaire":
+                    mensaje = "Tu estilo predominante es Laissez-faire: prefieres delegar y dar libertad a tu equipo.";
+                    break;
+            }
+
+            document.getElementById("result").innerHTML = mensaje;
+        });
+    </script>
+    <!-- Botón fijo de retorno a inicio: accesible, discreto y adaptativo -->
+    <style>
+        .btn-volver-inicio {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 1060;
+            border-radius: 999px;
+            padding: 0.45rem 0.85rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            opacity: 0.95;
+            transition: transform .12s ease, opacity .12s ease, bottom .12s ease;
+        }
+        .btn-volver-inicio:focus,
+        .btn-volver-inicio:hover {
+            transform: translateY(-3px);
+            opacity: 1;
+            outline: 3px solid rgba(13,110,253,0.25);
+        }
+
+        @media (max-width: 640px) {
+            .btn-volver-inicio { right: 12px; bottom: 12px; padding: 0.4rem 0.7rem; font-size: 0.95rem; }
+        }
+        @media (max-width: 420px) {
+            .btn-volver-inicio { right: 8px; bottom: 8px; font-size: 0.9rem; }
+        }
+
+        .fixed-bottom + .btn-volver-inicio,
+        .cookie-banner + .btn-volver-inicio { bottom: 64px; }
+
+        @media print { .btn-volver-inicio { display: none !important; } }
+    </style>
+    <a href="index.html" class="btn btn-primary btn-volver-inicio" aria-label="Volver al inicio" title="Volver al inicio" accesskey="h">Inicio</a>
+
+    <script>
+        (function () {
+            function adjustButton() {
+                const btn = document.querySelector('.btn-volver-inicio');
+                if (!btn) return;
+
+                const candidates = Array.from(document.querySelectorAll('body *'))
+                    .filter(el => {
+                        try {
+                            const st = window.getComputedStyle(el);
+                            if ((st.position === 'fixed' || st.position === 'sticky') && st.display !== 'none') {
+                                const rect = el.getBoundingClientRect();
+                                return rect.height > 0 && rect.bottom >= (window.innerHeight - 4);
+                            }
+                        } catch (e) { return false; }
+                        return false;
+                    });
+
+                let offset = 12;
+                candidates.forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    offset = Math.max(offset, Math.ceil(rect.height + 16));
+                });
+
+                btn.style.bottom = offset + 'px';
+            }
+
+            window.addEventListener('load', adjustButton);
+            window.addEventListener('resize', adjustButton);
+            const obs = new MutationObserver(adjustButton);
+            obs.observe(document.body, { childList: true, subtree: true, attributes: true });
+        })();
+    </script>
+</body>
+
+</html>
