@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador Interactivo de Liderazgo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 60px;
+        }
+
+        .resultado {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Liderazgo — Simulador</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#simulacion">Simulador</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#conceptos">Conceptos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#perfil">Mi Perfil</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="text-center">
+        <div class="container">
+            <h1 class="display-5">Simulador Interactivo de Liderazgo</h1>
+            <p class="lead">Decide en escenarios reales y descubre tu estilo de liderazgo. Ideal para estudiantes y
+                profesionales.</p>
+            <a href="#simulacion" class="btn btn-primary">Comenzar Simulación</a>
+        </div>
+    </section>
+
+    <!-- Simulación -->
+    <section id="simulacion" class="container mt-5">
+        <h2>Simulación: toma de decisiones</h2>
+        <p>Lee cada escenario y elige la opción que más se parezca a lo que harías. Al final, pulsa <b>Calcular
+                perfil</b>.</p>
+
+        <!-- Escenario 1 -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>Escenario 1 — Equipo desmotivado tras un proyecto fallido</h5>
+                <p>Tu equipo está desmoralizado tras no cumplir expectativas. ¿Qué haces primero?</p>
+                <button class="btn btn-outline-primary opcion" data-estilo="Afiliativo">Convoco una reunión para
+                    dialogar y escuchar.</button>
+                <button class="btn btn-outline-primary opcion" data-estilo="Coercitivo">Exijo resultados inmediatos y
+                    más disciplina.</button>
+                <button class="btn btn-outline-primary opcion" data-estilo="Laissez-faire">Dejo que el equipo se
+                    reorganice por su cuenta.</button>
+            </div>
+        </div>
+
+        <!-- Escenario 2 -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>Escenario 2 — Nuevas ideas en el equipo</h5>
+                <p>Un colaborador propone una idea innovadora. ¿Cómo reaccionas?</p>
+                <button class="btn btn-outline-primary opcion" data-estilo="Visionario">Escucho y planteo cómo encaja en
+                    la visión futura.</button>
+                <button class="btn btn-outline-primary opcion" data-estilo="Democrático">La someto a votación en el
+                    equipo.</button>
+                <button class="btn btn-outline-primary opcion" data-estilo="Coercitivo">Decido yo solo si se aplica o
+                    no.</button>
+            </div>
+        </div>
+
+        <!-- Escenario 3 -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>Escenario 3 — Crisis de tiempo en un proyecto</h5>
+                <p>El plazo está a punto de vencerse y falta mucho por hacer. ¿Qué haces?</p>
+                <button class="btn btn-outline-primary opcion" data-estilo="Coercitivo">Asigno tareas estrictas y
+                    controlo cada avance.</button>
+                <button class="btn btn-outline-primary opcion" data-estilo="Visionario">Recuerdo la importancia del
+                    objetivo final para motivar.</button>
+                <button class="btn btn-outline-primary opcion" data-estilo="Afiliativo">Refuerzo la confianza del equipo
+                    y doy apoyo emocional.</button>
+            </div>
+        </div>
+
+        <button id="calcular" class="btn btn-success">Calcular Perfil</button>
+
+        <!-- Resultado -->
+        <div id="resultado" class="resultado card">
+            <div class="card-body">
+                <h4>Tu estilo de liderazgo predominante es:</h4>
+                <h3 id="perfil-estilo"></h3>
+                <p id="perfil-descripcion"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conceptos -->
+    <section id="conceptos" class="container mt-5">
+        <h2>Conceptos Clave</h2>
+        <p>Daniel Goleman describe varios estilos de liderazgo:</p>
+        <ul>
+            <li><b>Coercitivo:</b> Controla y exige resultados inmediatos. Útil en crisis, pero desmotiva a largo plazo.
+            </li>
+            <li><b>Visionario:</b> Inspira al conectar con la visión futura.</li>
+            <li><b>Afiliativo:</b> Prioriza la armonía y las relaciones.</li>
+            <li><b>Democrático:</b> Fomenta la participación en la toma de decisiones.</li>
+            <li><b>Laissez-faire:</b> Deja libertad total, a veces falta de dirección.</li>
+        </ul>
+    </section>
+
+    <script>
+        const respuestas = {};
+
+        document.querySelectorAll('.opcion').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const estilo = btn.dataset.estilo;
+                respuestas[estilo] = (respuestas[estilo] || 0) + 1;
+
+                // visual feedback
+                btn.classList.add('btn-success');
+                setTimeout(() => btn.classList.remove('btn-success'), 500);
+            });
+        });
+
+        document.getElementById('calcular').addEventListener('click', () => {
+            if (Object.keys(respuestas).length === 0) {
+                alert("Responde al menos una pregunta antes de calcular tu perfil.");
+                return;
+            }
+
+            // calcular estilo con mayor puntaje
+            let estiloPredominante = null;
+            let max = 0;
+            for (let estilo in respuestas) {
+                if (respuestas[estilo] > max) {
+                    max = respuestas[estilo];
+                    estiloPredominante = estilo;
+                }
+            }
+
+            const descripciones = {
+                "Coercitivo": "Eres directo y exigente. Bueno en crisis, pero cuida no desmotivar.",
+                "Visionario": "Inspiras con una visión clara del futuro. Ideal para motivar a largo plazo.",
+                "Afiliativo": "Das prioridad a la armonía y al bienestar del equipo.",
+                "Democrático": "Valoras la participación y la colaboración en decisiones.",
+                "Laissez-faire": "Das total libertad, aunque a veces puede faltar dirección."
+            };
+
+            document.getElementById('perfil-estilo').textContent = estiloPredominante;
+            document.getElementById('perfil-descripcion').textContent = descripciones[estiloPredominante];
+            document.getElementById('resultado').style.display = 'block';
+            document.getElementById('resultado').scrollIntoView({ behavior: "smooth" });
+        });
+    </script>
+    <!-- Botón fijo de retorno a inicio: accesible, discreto y adaptativo -->
+    <style>
+        .btn-volver-inicio {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 1060;
+            border-radius: 999px;
+            padding: 0.45rem 0.85rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            opacity: 0.95;
+            transition: transform .12s ease, opacity .12s ease, bottom .12s ease;
+        }
+        .btn-volver-inicio:focus,
+        .btn-volver-inicio:hover {
+            transform: translateY(-3px);
+            opacity: 1;
+            outline: 3px solid rgba(13,110,253,0.25);
+        }
+
+        @media (max-width: 640px) {
+            .btn-volver-inicio { right: 12px; bottom: 12px; padding: 0.4rem 0.7rem; font-size: 0.95rem; }
+        }
+        @media (max-width: 420px) {
+            .btn-volver-inicio { right: 8px; bottom: 8px; font-size: 0.9rem; }
+        }
+
+        .fixed-bottom + .btn-volver-inicio,
+        .cookie-banner + .btn-volver-inicio { bottom: 64px; }
+
+        @media print { .btn-volver-inicio { display: none !important; } }
+    </style>
+    <a href="index.html" class="btn btn-primary btn-volver-inicio" aria-label="Volver al inicio" title="Volver al inicio" accesskey="h">Inicio</a>
+
+    <script>
+        (function () {
+            function adjustButton() {
+                const btn = document.querySelector('.btn-volver-inicio');
+                if (!btn) return;
+
+                const candidates = Array.from(document.querySelectorAll('body *'))
+                    .filter(el => {
+                        try {
+                            const st = window.getComputedStyle(el);
+                            if ((st.position === 'fixed' || st.position === 'sticky') && st.display !== 'none') {
+                                const rect = el.getBoundingClientRect();
+                                return rect.height > 0 && rect.bottom >= (window.innerHeight - 4);
+                            }
+                        } catch (e) { return false; }
+                        return false;
+                    });
+
+                let offset = 12;
+                candidates.forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    offset = Math.max(offset, Math.ceil(rect.height + 16));
+                });
+
+                btn.style.bottom = offset + 'px';
+            }
+
+            window.addEventListener('load', adjustButton);
+            window.addEventListener('resize', adjustButton);
+            const obs = new MutationObserver(adjustButton);
+            obs.observe(document.body, { childList: true, subtree: true, attributes: true });
+        })();
+    </script>
+</body>
+
+</html>

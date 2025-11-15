@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liderazgo Interactivo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        /* Skip-link: visible only on focus to help keyboard users */
+        .skip-link {
+            position: absolute;
+            left: -999px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            z-index: 2000;
+        }
+        .skip-link:focus {
+            left: 10px;
+            top: 10px;
+            width: auto;
+            height: auto;
+            padding: .5rem .75rem;
+            background: #000;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .answer-btn {
+            margin: 5px 0;
+            width: 100%;
+            text-align: left;
+        }
+
+        .feedback {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .progress {
+            height: 25px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Skip link para saltar directo al quiz -->
+    <a href="#quiz-container" class="skip-link">Saltar al Quiz</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Liderazgo Interactivo</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Inteligencia Emocional</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Quiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Casos de Estudio</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Quiz: ¿Qué tanto sabes de Liderazgo?</h1>
+
+        <!-- Barra de progreso -->
+        <div class="progress mb-4">
+            <div id="progress-bar" class="progress-bar bg-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%">0%</div>
+        </div>
+
+        <!-- Contenedor de preguntas -->
+        <div id="quiz-container"></div>
+
+        <!-- Resultado final -->
+        <div id="result-container" class="text-center mt-5 hidden" aria-live="polite" role="status" tabindex="-1">
+            <h3 id="score-text"></h3>
+            <p id="feedback-text"></p>
+            <a href="liderazgo_simulador.html" class="btn btn-primary mt-3">Pasar a la Simulación Personalizada</a>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                text: "1. Según Goleman, ¿cuál NO es un estilo de liderazgo?",
+                answers: [
+                    { text: "Autocrático", correct: false, feedback: "Incorrecto, sí es reconocido." },
+                    { text: "Empoderador", correct: true, feedback: "Correcto, este no está en la clasificación original de Goleman." },
+                    { text: "Democrático", correct: false, feedback: "Incorrecto, sí es un estilo válido." }
+                ]
+            },
+            {
+                text: "2. La empatía pertenece a cuál competencia de IE?",
+                answers: [
+                    { text: "Motivación", correct: false, feedback: "Incorrecto, motivación es otra competencia." },
+                    { text: "Autorregulación", correct: false, feedback: "No, la autorregulación es distinta." },
+                    { text: "Inteligencia Emocional", correct: true, feedback: "Correcto, la empatía es parte de la IE." }
+                ]
+            },
+            {
+                text: "3. ¿Qué estilo de liderazgo se asocia más con la innovación?",
+                answers: [
+                    { text: "Visionario", correct: true, feedback: "Correcto, el visionario fomenta innovación." },
+                    { text: "Coercitivo", correct: false, feedback: "No, este se centra en control estricto." },
+                    { text: "Paternalista", correct: false, feedback: "No es el más relacionado con innovación." }
+                ]
+            },
+            {
+                text: "4. ¿Qué competencia de IE implica controlar impulsos y emociones?",
+                answers: [
+                    { text: "Autorregulación", correct: true, feedback: "Correcto, es la clave del autocontrol." },
+                    { text: "Conciencia Social", correct: false, feedback: "No, esta se centra en otros." },
+                    { text: "Motivación", correct: false, feedback: "No, motivación es otra habilidad." }
+                ]
+            },
+            {
+                text: "5. El estilo democrático de liderazgo se caracteriza por:",
+                answers: [
+                    { text: "Toma de decisiones colectivas", correct: true, feedback: "Correcto, fomenta participación." },
+                    { text: "Órdenes directas y rápidas", correct: false, feedback: "No, eso es más coercitivo." },
+                    { text: "Dejar hacer sin dirección", correct: false, feedback: "Eso es laissez-faire." }
+                ]
+            },
+            {
+                text: "6. ¿Cuál estilo de Goleman se basa en construir lazos emocionales?",
+                answers: [
+                    { text: "Afiliativo", correct: true, feedback: "Correcto, se centra en las relaciones." },
+                    { text: "Visionario", correct: false, feedback: "No, ese es más sobre el futuro." },
+                    { text: "Coercitivo", correct: false, feedback: "No, es más rígido." }
+                ]
+            },
+            {
+                text: "7. ¿Qué competencia de IE ayuda a mantener la motivación frente a retos?",
+                answers: [
+                    { text: "Motivación", correct: true, feedback: "Correcto, es clave en retos." },
+                    { text: "Empatía", correct: false, feedback: "No, esta es más social." },
+                    { text: "Autorregulación", correct: false, feedback: "No, esa es autocontrol." }
+                ]
+            },
+            {
+                text: "8. ¿Qué estilo se recomienda en situaciones de crisis inmediatas?",
+                answers: [
+                    { text: "Coercitivo", correct: true, feedback: "Correcto, es útil en emergencias." },
+                    { text: "Democrático", correct: false, feedback: "No, requiere más tiempo." },
+                    { text: "Visionario", correct: false, feedback: "No es el más ágil en crisis." }
+                ]
+            },
+            {
+                text: "9. ¿Qué significa 'conciencia de uno mismo' en IE?",
+                answers: [
+                    { text: "Reconocer emociones propias", correct: true, feedback: "Correcto, es el autoconocimiento." },
+                    { text: "Entender a los demás", correct: false, feedback: "Eso es conciencia social." },
+                    { text: "Controlar impulsos", correct: false, feedback: "Eso es autorregulación." }
+                ]
+            },
+            {
+                text: "10. El estilo laissez-faire se caracteriza por:",
+                answers: [
+                    { text: "Mínima intervención del líder", correct: true, feedback: "Correcto, es muy libre." },
+                    { text: "Líder muy controlador", correct: false, feedback: "No, es lo opuesto." },
+                    { text: "Foco en motivar constantemente", correct: false, feedback: "Eso describe otro estilo." }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const quizContainer = document.getElementById("quiz-container");
+        const progressBar = document.getElementById("progress-bar");
+        const resultContainer = document.getElementById("result-container");
+        const scoreText = document.getElementById("score-text");
+        const feedbackText = document.getElementById("feedback-text");
+
+        function loadQuestion() {
+            quizContainer.innerHTML = "";
+            const q = questions[currentQuestion];
+            const qDiv = document.createElement("div");
+            qDiv.classList.add("question");
+
+            const qText = document.createElement("h5");
+            qText.textContent = q.text;
+            qDiv.appendChild(qText);
+
+            q.answers.forEach((a, i) => {
+                const btn = document.createElement("button");
+                btn.classList.add("btn", "btn-outline-primary", "answer-btn");
+                btn.textContent = a.text;
+                // ARIA: marcar como no presionado inicialmente
+                btn.setAttribute('aria-pressed', 'false');
+                btn.setAttribute('aria-label', a.text);
+                btn.onclick = () => checkAnswer(a, btn);
+                qDiv.appendChild(btn);
+            });
+
+            quizContainer.appendChild(qDiv);
+        }
+
+        function checkAnswer(answer, btnClicked) {
+            const feedback = document.createElement("p");
+            feedback.classList.add("feedback");
+            feedback.textContent = answer.feedback;
+            // Hacer que el feedback sea anunciado por lectores de pantalla
+            feedback.setAttribute('role','status');
+            feedback.setAttribute('aria-live','polite');
+            if (answer.correct) {
+                feedback.classList.add("text-success");
+                score++;
+            } else {
+                feedback.classList.add("text-danger");
+            }
+            quizContainer.appendChild(feedback);
+
+            // Deshabilitar botones
+            const buttons = document.querySelectorAll(".answer-btn");
+            buttons.forEach(b => b.disabled = true);
+            // Marcar aria-disabled y actualizar aria-pressed para el botón seleccionado
+            buttons.forEach(b => b.setAttribute('aria-disabled', 'true'));
+            if (btnClicked) {
+                btnClicked.setAttribute('aria-pressed', 'true');
+                btnClicked.setAttribute('aria-disabled', 'true');
+            }
+
+            setTimeout(nextQuestion, 1500);
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            updateProgress();
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function updateProgress() {
+            const percent = Math.round((currentQuestion / questions.length) * 100);
+            progressBar.style.width = percent + "%";
+            progressBar.textContent = percent + "%";
+            // Actualizar atributo ARIA para la barra de progreso
+            progressBar.setAttribute('aria-valuenow', percent);
+        }
+
+        function showResult() {
+            quizContainer.innerHTML = "";
+            resultContainer.classList.remove("hidden");
+            scoreText.textContent = `Tu puntaje: ${score} / ${questions.length}`;
+            if (score >= 8) {
+                feedbackText.textContent = "¡Excelente! Tienes un gran dominio de los conceptos de liderazgo.";
+            } else if (score >= 5) {
+                feedbackText.textContent = "Bien, tienes buenos conocimientos, aunque puedes reforzar algunos conceptos.";
+            } else {
+                feedbackText.textContent = "Necesitas repasar más los conceptos básicos antes de aplicar el simulador.";
+            }
+            // Mover foco al contenedor de resultado para usuarios de teclado/lectores de pantalla
+            try { resultContainer.focus(); } catch (e) { /* ignore */ }
+        }
+
+        // Inicializar
+        loadQuestion();
+        updateProgress();
+    </script>
+    <!-- Botón fijo de retorno a inicio: accesible, discreto y adaptativo -->
+    <style>
+        .btn-volver-inicio {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 1060;
+            border-radius: 999px;
+            padding: 0.45rem 0.85rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            opacity: 0.95;
+            transition: transform .12s ease, opacity .12s ease, bottom .12s ease;
+        }
+        .btn-volver-inicio:focus,
+        .btn-volver-inicio:hover {
+            transform: translateY(-3px);
+            opacity: 1;
+            outline: 3px solid rgba(13,110,253,0.25);
+        }
+
+        /* Ajustes responsive */
+        @media (max-width: 640px) {
+            .btn-volver-inicio { right: 12px; bottom: 12px; padding: 0.4rem 0.7rem; font-size: 0.95rem; }
+        }
+        @media (max-width: 420px) {
+            .btn-volver-inicio { right: 8px; bottom: 8px; font-size: 0.9rem; }
+        }
+
+        /* Si existen elementos fijos en la parte inferior (banners), el CSS ayuda a separarlo.
+           El script a continuación ajusta automáticamente el 'bottom' si hace falta. */
+        .fixed-bottom + .btn-volver-inicio,
+        .cookie-banner + .btn-volver-inicio { bottom: 64px; }
+
+        /* Ocultar en impresión */
+        @media print { .btn-volver-inicio { display: none !important; } }
+    </style>
+    <a href="index.html" class="btn btn-primary btn-volver-inicio" aria-label="Volver al inicio" title="Volver al inicio" accesskey="h">Inicio</a>
+
+    <script>
+        // Ajusta la posición inferior del botón si hay otros elementos fijos en la parte inferior (cookies, barras, footers fijos)
+        (function () {
+            function adjustButton() {
+                const btn = document.querySelector('.btn-volver-inicio');
+                if (!btn) return;
+
+                // Encuentra elementos visibles con position fixed/sticky que estén pegados al borde inferior
+                const candidates = Array.from(document.querySelectorAll('body *'))
+                    .filter(el => {
+                        try {
+                            const st = window.getComputedStyle(el);
+                            if ((st.position === 'fixed' || st.position === 'sticky') && st.display !== 'none') {
+                                const rect = el.getBoundingClientRect();
+                                return rect.height > 0 && rect.bottom >= (window.innerHeight - 4);
+                            }
+                        } catch (e) { return false; }
+                        return false;
+                    });
+
+                let offset = 12; // mínimo margen
+                candidates.forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    offset = Math.max(offset, Math.ceil(rect.height + 16));
+                });
+
+                btn.style.bottom = offset + 'px';
+            }
+
+            window.addEventListener('load', adjustButton);
+            window.addEventListener('resize', adjustButton);
+            // observar cambios DOM (p. ej. aparición de banners de cookies)
+            const obs = new MutationObserver(adjustButton);
+            obs.observe(document.body, { childList: true, subtree: true, attributes: true });
+        })();
+    </script>
+</body>
+
+</html>
